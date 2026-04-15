@@ -11,6 +11,8 @@ model Exemplo {
     nome      String
     estado    Boolean  @default(true)
     preco     Decimal? @db.Decimal(10, 2)
+    foto      String?
+    documento String?
 
     @@map("exemplo")
 }
