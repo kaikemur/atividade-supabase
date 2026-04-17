@@ -26,7 +26,7 @@ export const upload = async (id, file) => {
     const {error} = await supabase.storage
     .from(BUCKET)
 
-    .upload(path, buffer, {contentType, upset: true});
+    .upload(path, buffer, {contentType, upsert: true});
 
     if (error) throw new Error(error.message);
 
@@ -38,5 +38,5 @@ export const deletar = async (url) => {
 
     const { error } = await supabase.storage.from(BUCKET).remove([path]);
 
-    if (error) throw new Error(error.messsage);
+    if (error) throw new Error(error.message);
 };
