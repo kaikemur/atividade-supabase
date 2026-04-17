@@ -5,11 +5,12 @@ import supabase from '../services/supabase.js';
 const BUCKET = 'arquivos';
 
 const prepararFoto = async (buffer) =>
-    sharp(buffer).resize({width:800, withoutEnlargement: true})
+    sharp(buffer)
+        .resize({ width: 800, withoutEnlargement: true })
 
-    .webp({ quality: 80 })
+        .webp({ quality: 80 })
 
-    .toBuffer();
+        .toBuffer();
 
 export const upload = async (id, file) => {
     const ehFoto = file.mimetype.startsWith('image/');
@@ -17,16 +18,15 @@ export const upload = async (id, file) => {
     const buffer = ehFoto ? await prepararFoto(file.buffer) : file.buffer;
 
     const path = ehFoto
-        ? `${id}/foto.webp`:
-     
-        `${id}/documento.${file.originalname.split('.').pop()}`;
-    
+        ? `${id}/foto.webp`
+        : `${id}/documento.${file.originalname.split('.').pop()}`;
+
     const contentType = ehFoto ? 'image/webp' : file.mimetype;
 
-    const {error} = await supabase.storage
-    .from(BUCKET)
+    const { error } = await supabase.storage
+        .from(BUCKET)
 
-    .upload(path, buffer, {contentType, upsert: true});
+        .upload(path, buffer, { contentType, upsert: true });
 
     if (error) throw new Error(error.message);
 
@@ -34,7 +34,11 @@ export const upload = async (id, file) => {
 };
 
 export const deletar = async (url) => {
-    const path = url.split(`${BUCKET}/`)[1];
+    const bucketPrefix = `/storage/v1/object/public/${BUCKET}/`;
+    const prefixIndex = url.indexOf(bucketPrefix);
+    const path = prefixIndex >= 0 ? url.slice(prefixIndex + bucketPrefix.length) : null;
+
+    if (!path) throw new Error('URL inválida para remoção de arquivo.');
 
     const { error } = await supabase.storage.from(BUCKET).remove([path]);
 

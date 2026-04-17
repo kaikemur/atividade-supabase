@@ -116,7 +116,7 @@ export const deletar = async (req, res) => {
 
         return res.status(200).json({ message: `O registro "${exemplo.nome}" foi deletado com sucesso!`, deletado: exemplo });
     } catch (error) {
-        console.error('Erro ao deletar:', error);
+        console.log('Erro ao deletar:', error);
         return res.status(500).json({ error: 'Erro ao deletar registro.' });
     }
 };
